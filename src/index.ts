@@ -6,10 +6,14 @@ import passport from "../config/passport";
 import routes from "./routes";
 import cors from "cors";
 import { CLIENT_URL } from "./lib";
+import logger from "./utils/logger";
+import morgan from "morgan";
 
 const app = express();
 
 dotenv.config();
+
+app.use(morgan("combined"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,6 +22,9 @@ app.use(passport.initialize());
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      if (!origin) return callback(null, true);
+
       if (CLIENT_URL !== origin) {
         const msg = `The CORS policy for this site does not allow access from the specified origin: ${origin}`;
         return callback(new Error(msg), false);
@@ -37,7 +44,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // General error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error(err.stack);
+  logger.error(err.stack as string);
   res.status(500).json({ message: "Internal Server Error" });
 });
 
@@ -49,8 +56,8 @@ if (!dbURI) throw new Error("MongoDB URI is not defined in ENV");
 
 mongoose
   .connect(dbURI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((error) => console.log("Error connecting to MongoDB:", error));
+  .then(() => logger.info("MongoDB connected"))
+  .catch((error) => logger.error(`Error connecting to MongoDB:, ${error}`));
 
 const PORT = process.env.PORT || 3030;
-app.listen(PORT, () => console.log(`Server running on PORT ${PORT}`));
+app.listen(PORT, () => logger.info(`Server running on PORT ${PORT}`));
