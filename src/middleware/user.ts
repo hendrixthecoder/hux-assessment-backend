@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 
 const userSchema = z.object({
-  firstname: z.string().min(1, "Firstname is required!"),
-  lastname: z.string().min(1, "Lastname is required!"),
+  firstName: z.string().min(1, "Firstname is required!"),
+  lastName: z.string().min(1, "Lastname is required!"),
   email: z.string().email("Invalid email address").min(1, "Email is required!"),
   password: z.string().min(6, "Password must be at least 6 characters long!"),
   phoneNumber: z.string().min(10, "Number must be at least 10 digits long!"),
