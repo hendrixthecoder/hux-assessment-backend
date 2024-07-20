@@ -61,7 +61,13 @@ export const loginUser = async (
     // Send the token in the response
     res.status(200).json({ user, token });
   } catch (error) {
-    logger.error(error.message);
-    res.status(500).json({ message: "Internal Server Error" });
+    // Send error response
+    if (error instanceof Error) {
+      logger.error(error.message);
+      res.status(400).json({ message: error.message });
+    } else {
+      logger.error(error as string);
+      res.status(500).json({ message: "Internal Server Error" });
+    }
   }
 };
