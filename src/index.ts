@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
+import passport from "../config/passport";
 
 import userRoutes from "./routes/user";
 
@@ -10,6 +11,8 @@ const app = express();
 dotenv.config();
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(passport.initialize());
 
 app.use("/api/user", userRoutes);
 
