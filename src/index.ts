@@ -4,6 +4,8 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import passport from "../config/passport";
 import routes from "./routes";
+import cors from "cors";
+import { CLIENT_URL } from "./lib";
 
 const app = express();
 
@@ -12,6 +14,19 @@ dotenv.config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (CLIENT_URL !== origin) {
+        const msg = `The CORS policy for this site does not allow access from the specified origin: ${origin}`;
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
+    credentials: true,
+  })
+);
 
 app.use("/api", routes);
 
