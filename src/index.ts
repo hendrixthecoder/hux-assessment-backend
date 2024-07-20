@@ -44,7 +44,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 
 // General error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.stack as string);
+  logger.error(err.stack);
   res.status(500).json({ message: "Internal Server Error" });
 });
 

@@ -6,7 +6,7 @@ interface IUser extends Document {
   password: string;
   firstName: string;
   lastName: string;
-  number: string;
+  phoneNumber: string;
   _id: ObjectId;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
@@ -16,7 +16,7 @@ const userSchema = new Schema<IUser>({
   password: { type: String, required: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
-  number: { type: String, required: true },
+  phoneNumber: { type: String, required: true },
 });
 
 // Pre-save hook to hash password

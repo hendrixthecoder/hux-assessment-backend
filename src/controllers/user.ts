@@ -25,11 +25,8 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(201).json({ user, token });
   } catch (error) {
     // Send error response
-    if (error instanceof Error) {
-      res.status(400).json({ message: error.message });
-    } else {
-      res.status(500).json({ message: "Internal Server Error" });
-    }
+    logger.error(error);
+    res.status(500).json({ message: "Something went wrong try again later!" });
   }
 };
 
@@ -62,12 +59,7 @@ export const loginUser = async (
     res.status(200).json({ user, token });
   } catch (error) {
     // Send error response
-    if (error instanceof Error) {
-      logger.error(error.message);
-      res.status(400).json({ message: error.message });
-    } else {
-      logger.error(error as string);
-      res.status(500).json({ message: "Internal Server Error" });
-    }
+    logger.error(error);
+    res.status(500).json({ message: "Something went wrong, try again later!" });
   }
 };

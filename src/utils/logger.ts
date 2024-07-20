@@ -1,8 +1,8 @@
-const info = (message: string) => {
+const info = (message: any) => {
   console.log(message);
 };
 
-const error = (message: string) => {
+const error = (message: any) => {
   console.log(message);
 };
 
