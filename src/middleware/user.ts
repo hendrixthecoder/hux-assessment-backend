@@ -1,54 +1,78 @@
+import * as yup from "yup";
 import { Request, Response, NextFunction } from "express";
-import { z } from "zod";
 
-const userSchema = z.object({
-  firstName: z.string().min(1, "Firstname is required!"),
-  lastName: z.string().min(1, "Lastname is required!"),
-  email: z.string().email("Invalid email address").min(1, "Email is required!"),
-  password: z.string().min(6, "Password must be at least 6 characters long!"),
-  phoneNumber: z.string().min(10, "Number must be at least 10 digits long!"),
+const userSchema = yup.object().shape({
+  firstName: yup
+    .string()
+    .required("Firstname is required!")
+    .min(1, "Firstname is required!"),
+  lastName: yup
+    .string()
+    .required("Lastname is required!")
+    .min(1, "Lastname is required!"),
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email is required!"),
+  password: yup
+    .string()
+    .required("Password is required!")
+    .min(6, "Password must be at least 6 characters long!"),
+  phoneNumber: yup
+    .string()
+    .required("Phone number is required!")
+    .matches(/^[0-9]+$/, "Phone number must contain only digits")
+    .min(10, "Phone number must be at least 10 digits long!")
+    .max(12, "Phone number must be at most 12 digits long!"),
 });
 
 // Middleware to validate user creation parameters
-export const validateCreateUserParams = (
+export const validateCreateUserParams = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const validationResult = userSchema.safeParse(req.body);
-  if (!validationResult.success) {
-    return res.status(400).json({
-      message: "Invalid request!",
-      errors: validationResult.error.errors,
-    });
+  try {
+    await userSchema.validate(req.body, { abortEarly: false });
+    next();
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return res.status(400).json({
+        message: "Invalid request!",
+        errors: error.errors,
+      });
+    }
+    return res.status(500).json({ message: "Internal server error" });
   }
-  next();
 };
 
 // Middleware to validate login parameters
-export const validateLoginParams = (
+export const validateLoginParams = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const { email, password } = req.body;
-  const validationResult = z
-    .object({
-      email: z
-        .string()
-        .email("Invalid email address")
-        .min(1, "Email is required!"),
-      password: z
-        .string()
-        .min(6, "Password must be at least 6 characters long!"),
-    })
-    .safeParse({ email, password });
+  const loginSchema = yup.object().shape({
+    email: yup
+      .string()
+      .email("Invalid email address")
+      .required("Email is required!"),
+    password: yup
+      .string()
+      .required("Password is required!")
+      .min(6, "Password must be at least 6 characters long!"),
+  });
 
-  if (!validationResult.success) {
-    return res.status(400).json({
-      message: "Invalid request!",
-      errors: validationResult.error.errors,
-    });
+  try {
+    await loginSchema.validate(req.body, { abortEarly: false });
+    next();
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return res.status(400).json({
+        message: "Invalid request!",
+        errors: error.errors,
+      });
+    }
+    return res.status(500).json({ message: "Internal server error" });
   }
-  next();
 };
