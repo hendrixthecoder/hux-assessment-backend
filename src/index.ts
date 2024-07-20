@@ -1,10 +1,9 @@
-import express from "express";
+import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import passport from "../config/passport";
-
-import userRoutes from "./routes/user";
+import routes from "./routes";
 
 const app = express();
 
@@ -14,7 +13,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(passport.initialize());
 
-app.use("/api/user", userRoutes);
+app.use("/api", routes);
+
+// Catch-all route handler for 404
+app.use((req: Request, res: Response, next: NextFunction) => {
+  res.status(404).json({ message: "Not Found" });
+});
+
+// General error handling middleware
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ message: "Internal Server Error" });
+});
 
 const dbURI =
   process.env.NODE_ENV === "production"
