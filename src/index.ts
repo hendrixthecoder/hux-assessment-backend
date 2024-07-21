@@ -2,12 +2,12 @@ import express, { Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import passport from "../config/passport";
 import routes from "./routes";
 import cors from "cors";
 import { CLIENT_URL } from "./lib";
 import logger from "./utils/logger";
 import morgan from "morgan";
+import { errorHandler } from "./utils";
 
 const app = express();
 
@@ -17,7 +17,6 @@ app.use(morgan("combined"));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(passport.initialize());
 
 app.use(
   cors({
@@ -35,6 +34,7 @@ app.use(
   })
 );
 
+// Register all routes
 app.use("/api", routes);
 
 // Catch-all route handler for 404
@@ -43,10 +43,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 });
 
 // General error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  logger.error(err.stack);
-  res.status(500).json({ message: "Internal Server Error" });
-});
+app.use(errorHandler);
 
 const dbURI =
   process.env.NODE_ENV === "production"

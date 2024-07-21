@@ -4,8 +4,10 @@ import {
   fetchUserContacts,
   fetchUserContact,
 } from "../controllers/contact";
+import { authenticateJWT } from "../middleware/auth";
 
 const router = Router();
+router.use(authenticateJWT);
 
 router.get("/", fetchUserContacts);
 router.get("/:id", fetchUserContact);

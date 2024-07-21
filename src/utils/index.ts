@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import { getJWTSecret } from "../lib";
 import { IUser } from "../models/User";
 import { randomBytes } from "crypto";
+import { NextFunction, Request, Response } from "express";
+import logger from "./logger";
 
 dotenv.config();
 
@@ -22,4 +24,18 @@ export const generateToken = async (user: IUser) => {
     .sign(encoder.encode(secretKey));
 
   return jwt;
+};
+
+export const errorHandler = (
+  err: Error,
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  logger.error(err.stack);
+  if (err.name === "UnauthorizedError") {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  return res.status(500).json({ error: "Internal Server Error" });
 };
