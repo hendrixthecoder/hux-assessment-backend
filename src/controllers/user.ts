@@ -19,7 +19,7 @@ export const createUser = async (req: Request, res: Response) => {
     const user = await presaveUser.save();
 
     // Generate a JWT token
-    const token = generateToken(user._id.toString());
+    const token = await generateToken(user);
 
     // Send the token in the response
     res.status(201).json({ user, token });
@@ -53,7 +53,7 @@ export const loginUser = async (
     }
 
     // Generate JWT token
-    const token = generateToken(user._id.toString());
+    const token = await generateToken(user);
 
     // Send the token in the response
     res.status(200).json({ user, token });

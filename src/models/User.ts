@@ -1,7 +1,7 @@
 import mongoose, { Document, ObjectId, Schema } from "mongoose";
 import bcrypt from "bcryptjs";
 
-interface IUser extends Document {
+export interface IUser extends Document {
   email: string;
   password: string;
   firstName: string;
@@ -25,6 +25,14 @@ userSchema.pre("save", async function (next) {
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
   next();
+});
+
+// Exclude password field from JSON
+userSchema.set("toJSON", {
+  transform: (doc, ret) => {
+    delete ret.password;
+    return ret;
+  },
 });
 
 // Method to compare passwords
