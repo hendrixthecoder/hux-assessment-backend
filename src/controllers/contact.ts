@@ -8,7 +8,9 @@ export const fetchUserContacts = async (
   res: Response
 ) => {
   try {
-    const contacts = await Contact.find({ user: req.user?._id });
+    const contacts = await Contact.find({ user: req.user?._id }).sort({
+      createdAt: -1,
+    });
 
     return res.json(contacts);
   } catch (error) {
@@ -25,7 +27,9 @@ export const fetchUserContact = async (
 
 export const createNewContact = async (req: RequestWithUser, res: Response) => {
   try {
-    return req.user;
+    const contact = new Contact({ ...req.body, user: req.user?._id });
+    await contact.save();
+    res.status(201).json(contact);
   } catch (error) {
     // Send error response
     logger.error(error);
