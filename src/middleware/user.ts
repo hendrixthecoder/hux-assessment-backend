@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import { Request, Response, NextFunction } from "express";
 
-const userSchema = yup.object().shape({
+export const userSchema = yup.object().shape({
   firstName: yup
     .string()
     .required("Firstname is required!")
