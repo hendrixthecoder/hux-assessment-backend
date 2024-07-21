@@ -8,6 +8,7 @@ import { CLIENT_URL } from "./lib";
 import logger from "./utils/logger";
 import morgan from "morgan";
 import { errorHandler } from "./utils";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
@@ -15,6 +16,7 @@ dotenv.config();
 
 app.use(morgan("combined"));
 
+app.use(cookieParser()); // For pass cookies passed for Auth reasons
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 

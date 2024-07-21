@@ -1,14 +1,16 @@
-import { Request, Response, NextFunction } from "express";
-import User from "../models/User";
+import { Response } from "express";
 import logger from "../utils/logger";
 import { RequestWithUser } from "../middleware/auth";
+import Contact from "../models/Contact";
 
 export const fetchUserContacts = async (
   req: RequestWithUser,
   res: Response
 ) => {
   try {
-    return req.user;
+    const contacts = await Contact.find({ user: req.user?._id });
+
+    return res.json(contacts);
   } catch (error) {
     // Send error response
     logger.error(error);

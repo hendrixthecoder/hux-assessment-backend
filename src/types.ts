@@ -2,4 +2,4 @@ import { userSchema } from "./middleware/user";
 import { InferType } from "yup";
 
 export type UserType = InferType<typeof userSchema>;
-export type UserTypeNoPass = Omit<UserType, "password">;
+export type UserTypeNoPass = Omit<UserType, "password"> & { _id: string };

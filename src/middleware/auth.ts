@@ -12,8 +12,7 @@ export const authenticateJWT = async (
   response: Response,
   next: NextFunction
 ) => {
-  const authHeader = request.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1]; // Safely split the authorization header
+  const token = request.cookies.session_token;
 
   if (!token) {
     return response.status(401).json({ message: "Unauthorized" }); // Return JSON response for better error handling
