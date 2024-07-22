@@ -3,56 +3,34 @@ import Contact from "../models/Contact";
 import mongoose from "mongoose";
 import { server } from "../index"
 import { describe, expect, test } from "@jest/globals";
-
-jest.mock('../middleware/auth', () => ({
-  authenticateJWT: jest.fn((req, res, next) => {
-    const authHeader = req.cookies.session_token;
-
-    if (!authHeader) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
-
-    next();
-  }), // Mock implementation
-}));
-
-jest.mock('../middleware/user', () => ({
-  validateCreateUserParams: jest.fn((req, res, next) => next()), // Mock implementation
-  validateLoginParams: jest.fn((req, res, next) => next())
-}));
-
-jest.mock("../middleware/contact", () => ({
-  validateEditContactParams: jest.fn((req, res, next) => next()), // Mock implementation
-}));
-
-jest.mock("../controllers/contact", () => ({
-  createNewContact: jest.fn((req, res, next) => next()), // Mock implementation
-  fetchUserContact: jest.fn((req, res, next) => next()), // Mock implementation
-  fetchUserContacts: jest.fn((req, res, next) => next()), // Mock implementation
-  editUserContact: jest.fn((req, res, next) => next()),
-  deleteUserContact: jest.fn((req, res, next) => next())
-}));
-
-jest.mock("../controllers/user", () => ({
-  loginUser: jest.fn((req, res, next) => next()),
-  createUser: jest.fn((req, res, next) => next())
-}));
+import User from "../models/User";
 
 
-// Connect to a test database before running the tests
+let authToken = "";
+
 beforeAll(async () => {
-  const mongoURI = 'mongodb://localhost:27017/testdb'; // Test DB
+  server.listen
+  const mongoURI = 'mongodb://localhost:27017/testdb';
   await mongoose.connect(mongoURI);
-});
 
-// Clear the database after each test
-afterEach(async () => {
-  jest.clearAllMocks()
-  await Contact.deleteMany({});
+  // Create a user and get the authentication token to use for all tests
+  const newUser = {
+    email: 'testuser@example.com',
+    password: 'password123',
+    phoneNumber: '1234567891',
+    firstName: "Biobele",
+    lastName: "Johnbull",
+    password: "testing123"
+  };
+
+  const { body: { token } } = await request(server).post('/api/users/register').send(newUser);
+  authToken = token; // Set token to be used for all auth requests
 });
 
 // Disconnect the database after all tests
 afterAll(async () => {
+  await Contact.deleteMany({});
+  await User.deleteMany({})
   await mongoose.disconnect();
   server.close();
 });
@@ -75,4 +53,20 @@ describe('POST /users/contacts', () => {
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe("Unauthorized")
   });
+
+  test('should throw error when passing invalid payload', async () => {
+    const invalidContact = {
+      // Empty object so error will be thrown
+    }
+
+    const response = await request(server)
+      .post('/api/users/contacts')
+      .set("Cookie", `session_token=${authToken}`)
+      .send(invalidContact)
+      .expect('Content-Type', /json/)
+      .expect(400)
+    
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Invalid request!")
+  })
 });
