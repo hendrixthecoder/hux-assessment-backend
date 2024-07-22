@@ -53,10 +53,18 @@ const dbURI =
     : process.env.MONGODB_URI_DEV;
 if (!dbURI) throw new Error("MongoDB URI is not defined in ENV");
 
-mongoose
-  .connect(dbURI)
-  .then(() => logger.info("MongoDB connected"))
-  .catch((error) => logger.error(`Error connecting to MongoDB:, ${error}`));
+// If in test env no need to create mongoose conn
+if (process.env.NODE_ENV !== "test")
+  mongoose
+    .connect(dbURI)
+    .then(() => logger.info("MongoDB connected"))
+    .catch((error) => logger.error(`Error connecting to MongoDB:, ${error}`));
 
 const PORT = process.env.PORT || 3030;
-app.listen(PORT, () => logger.info(`Server running on PORT ${PORT}`));
+const server = app.listen(PORT, () =>
+  logger.info(`Server running on PORT ${PORT}`)
+);
+
+export { server };
+
+export default app;
