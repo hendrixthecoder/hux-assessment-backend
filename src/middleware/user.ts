@@ -1,31 +1,6 @@
 import * as yup from "yup";
 import { Request, Response, NextFunction } from "express";
 
-export const userSchema = yup.object().shape({
-  firstName: yup
-    .string()
-    .required("Firstname is required!")
-    .min(1, "Firstname is required!"),
-  lastName: yup
-    .string()
-    .required("Lastname is required!")
-    .min(1, "Lastname is required!"),
-  email: yup
-    .string()
-    .email("Invalid email address")
-    .required("Email is required!"),
-  password: yup
-    .string()
-    .required("Password is required!")
-    .min(6, "Password must be at least 6 characters long!"),
-  phoneNumber: yup
-    .string()
-    .required("Phone number is required!")
-    .matches(/^[0-9]+$/, "Phone number must contain only digits")
-    .min(10, "Phone number must be at least 10 digits long!")
-    .max(12, "Phone number must be at most 12 digits long!"),
-});
-
 // Middleware to validate user creation parameters
 export const validateCreateUserParams = async (
   req: Request,
@@ -76,3 +51,28 @@ export const validateLoginParams = async (
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const userSchema = yup.object().shape({
+  firstName: yup
+    .string()
+    .required("Firstname is required!")
+    .min(1, "Firstname is required!"),
+  lastName: yup
+    .string()
+    .required("Lastname is required!")
+    .min(1, "Lastname is required!"),
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email is required!"),
+  password: yup
+    .string()
+    .required("Password is required!")
+    .min(6, "Password must be at least 6 characters long!"),
+  phoneNumber: yup
+    .string()
+    .required("Phone number is required!")
+    .matches(/^[0-9]+$/, "Phone number must contain only digits")
+    .min(10, "Phone number must be at least 10 digits long!")
+    .max(12, "Phone number must be at most 12 digits long!"),
+});

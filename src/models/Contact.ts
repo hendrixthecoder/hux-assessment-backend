@@ -18,7 +18,12 @@ const contactSchema = new Schema<IContact>(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     phoneNumber: { type: String, required: true },
-    user: { type: Schema.Types.ObjectId, required: true, index: true },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      index: true,
+    },
   },
   { timestamps: true }
 );
