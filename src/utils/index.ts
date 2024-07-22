@@ -20,7 +20,7 @@ export const generateToken = async (user: IUser) => {
     .setProtectedHeader({ alg: "HS256" })
     .setJti(jwtId)
     .setIssuedAt()
-    .setExpirationTime("10m")
+    .setExpirationTime("1h")
     .sign(encoder.encode(secretKey));
 
   return jwt;
