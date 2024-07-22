@@ -21,6 +21,7 @@
     "jose": "^5.6.3",
     "mongoose": "^8.5.1",
     "morgan": "^1.10.0",
+    "typescript": "^5.5.3",
     "yup": "^1.4.0",
     "zod": "^3.23.8"
   },
@@ -43,7 +44,6 @@
     "superagent": "^9.0.2",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.3",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.3"
+    "ts-node-dev": "^2.0.0"
   }
 }
