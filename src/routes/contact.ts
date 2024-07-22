@@ -4,6 +4,7 @@ import {
   fetchUserContacts,
   fetchUserContact,
   editUserContact,
+  deleteUserContact,
 } from "../controllers/contact";
 import { authenticateJWT } from "../middleware/auth";
 import { validateCreateUserParams } from "../middleware/user";
@@ -16,5 +17,6 @@ router.get("/", fetchUserContacts);
 router.post("/", validateCreateUserParams, createNewContact);
 router.get("/:id", fetchUserContact);
 router.put("/:id", validateEditContactParams, editUserContact);
+router.delete("/:id", deleteUserContact);
 
 export default router;

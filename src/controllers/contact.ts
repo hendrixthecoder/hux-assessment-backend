@@ -72,3 +72,26 @@ export const editUserContact = async (req: RequestWithUser, res: Response) => {
     res.status(500).json({ message: "Something went wrong try again later!" });
   }
 };
+
+export const deleteUserContact = async (
+  req: RequestWithUser,
+  res: Response
+) => {
+  try {
+    const contact = await Contact.findOne({
+      user: req.user?._id,
+      _id: req.params.id,
+    });
+
+    if (!contact)
+      return res
+        .status(404)
+        .json({ message: "Contact not found or may have been deleted!" });
+
+    await contact.deleteOne();
+    res.status(204).end();
+  } catch (error) {
+    logger.error(error);
+    res.status(500).json({ message: "Something went wrong try again later!" });
+  }
+};
