@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { server } from "../index"
 import { describe, expect, test } from "@jest/globals";
 import User from "../models/User";
+import { response } from "express";
 
 
 let authToken = "";
@@ -84,5 +85,9 @@ describe('POST /users/contacts', () => {
       .send(newContact)
       .expect('Content-Type', /json/)
       .expect(201)
+    
+    // Check if the response body has the same structure and values as `newContact`
+    expect(response.body).toEqual(expect.objectContaining(newContact));
   })
+
 });

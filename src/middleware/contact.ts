@@ -11,8 +11,6 @@ export const validateEditContactParams = async (
     await editContactSchema.validate(req.body, { abortEarly: false });
     next();
   } catch (error) {
-    console.log({ error });
-
     if (error instanceof yup.ValidationError) {
       return res.status(400).json({
         message: "Invalid request!",
