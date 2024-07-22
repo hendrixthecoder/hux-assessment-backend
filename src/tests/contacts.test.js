@@ -41,7 +41,7 @@ describe('POST /users/contacts', () => {
       firstName: 'John',
       lastName: 'Doe',
       email: 'john.doe@example.com',
-      phone: '1234567890',
+      phoneNumber: '1234567890',
     };
 
     const response = await request(server)
@@ -68,5 +68,21 @@ describe('POST /users/contacts', () => {
     
     expect(response.body).toHaveProperty("message");
     expect(response.body.message).toBe("Invalid request!")
+  })
+
+  test('should create contact when authenticated and passed correct payload', async () => {
+    const newContact = {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'john.doe@example.com',
+      phoneNumber: '1234567890',
+    };
+
+    const response = await request(server)
+      .post('/api/users/contacts')
+      .set("Cookie", `session_token=${authToken}`)
+      .send(newContact)
+      .expect('Content-Type', /json/)
+      .expect(201)
   })
 });
