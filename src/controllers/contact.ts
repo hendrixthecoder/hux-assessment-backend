@@ -20,10 +20,20 @@ export const fetchUserContacts = async (
   }
 };
 
-export const fetchUserContact = async (
-  req: RequestWithUser,
-  res: Response
-) => {};
+export const fetchUserContact = async (req: RequestWithUser, res: Response) => {
+  try {
+    const contact = await Contact.findOne({
+      _id: req.params.id,
+      user: req.user?._id,
+    });
+
+    return res.status(200).json(contact);
+  } catch (error) {
+    // Send error response
+    logger.error(error);
+    res.status(500).json({ message: "Something went wrong try again later!" });
+  }
+};
 
 export const createNewContact = async (req: RequestWithUser, res: Response) => {
   try {
