@@ -103,7 +103,9 @@ describe('POST /users/contacts', () => {
     // Check if the response body has the same structure and values as `newContact`
     expect(response.body).toEqual(expect.objectContaining(newContact));
   })
+});
 
+describe('PUT /users/contacts', () => {
   test('should throw error when invalid payload is when editing contact', async () => {
     const invalidContact = {
       // Empty object so error will be thrown
@@ -137,5 +139,4 @@ describe('POST /users/contacts', () => {
     
     expect(response.body).toEqual(expect.objectContaining(newContact));
   })
-
-});
+})
