@@ -4,10 +4,10 @@ import mongoose from "mongoose";
 import { server } from "../index"
 import { describe, expect, test } from "@jest/globals";
 import User from "../models/User";
-import { response } from "express";
 
 
 let authToken = "";
+let userContact = {};
 
 beforeAll(async () => {
   server.listen
@@ -21,11 +21,25 @@ beforeAll(async () => {
     phoneNumber: '1234567891',
     firstName: "Biobele",
     lastName: "Johnbull",
-    password: "testing123"
   };
+
+  const newContact = {
+    email: 'testuser@example.com',
+    phoneNumber: '1234567891',
+    firstName: "Himothy",
+    lastName: "TheGoat",
+  }
 
   const { body: { token } } = await request(server).post('/api/users/register').send(newUser);
   authToken = token; // Set token to be used for all auth requests
+
+  // Dummy contact to use in test
+  const { body: contact } = await request(server)
+    .post('/api/users/contacts')
+    .set("Cookie", `session_token=${token}`)
+    .send(newContact);
+  
+  userContact = contact;
 });
 
 // Disconnect the database after all tests
@@ -87,6 +101,40 @@ describe('POST /users/contacts', () => {
       .expect(201)
     
     // Check if the response body has the same structure and values as `newContact`
+    expect(response.body).toEqual(expect.objectContaining(newContact));
+  })
+
+  test('should throw error when invalid payload is when editing contact', async () => {
+    const invalidContact = {
+      // Empty object so error will be thrown
+    }
+
+    const response = await request(server)
+      .put(`/api/users/contacts/${userContact?._id}`)
+      .set("Cookie", `session_token=${authToken}`)
+      .send(invalidContact)
+      .expect('Content-Type', /json/)
+      .expect(400)
+    
+    expect(response.body).toHaveProperty("message");
+    expect(response.body.message).toBe("Invalid request!")
+  })
+
+  test('should update contact when valid payload is passed', async () => {
+    const newContact = {
+      email: 'testuser@example.com',
+      phoneNumber: '1234567891',
+      firstName: "HimothyUpdated",
+      lastName: "TheGoat",
+    }
+
+    const response = await request(server)
+      .put(`/api/users/contacts/${userContact?._id}`)
+      .set("Cookie", `session_token=${authToken}`)
+      .send(newContact)
+      .expect('Content-Type', /json/)
+      .expect(200)
+    
     expect(response.body).toEqual(expect.objectContaining(newContact));
   })
 
