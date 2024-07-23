@@ -5,3 +5,5 @@ You need three variables in your env
 3. CLIENT_URL_DEV - Client URL with PORT
 
 Then just npm run dev away!
+
+Just the create and update endpoints where tested, the tests are in the src directory.
